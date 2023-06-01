@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  db:
+    image: face-recognition-mysql:8.0
+    container_name: face-recognition-db # コンテナ名はお好みで
+    restart: always
+    ports:
+      - "3312:3306" #portはお好みで
+    volumes:
+      # 永続データ
+      # docker/dbを自分で作成してください
+      - ./docker/db/data:/var/lib/mysql
+
+      # 起動時のデータ初期化
+      - ./docker/db/sql:/docker-entrypoint-initdb.d
+      # my.cnfファイル
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: face
+      MYSQL_USER: testUser
+      MYSQL_PASSWORD: Password123
+      TZ: "Asia/Tokyo"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    build: ./ #Dockerfileがあるディレクトリを指定します。
